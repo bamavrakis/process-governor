@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 import psutil
-from psutil import STATUS_STOPPED, NoSuchProcess
+from psutil import STATUS_STOPPED, NoSuchProcess, ZombieProcess, AccessDenied
 from psutil._pswindows import WindowsService
 
 from constants.any import LOG
@@ -12,12 +12,12 @@ from util.decorators import suppress_exception
 # Fix bug of psutil
 WindowsService.description = suppress_exception(
     WindowsService.description,
-    (FileNotFoundError,),
+    (FileNotFoundError, ZombieProcess, AccessDenied, OSError),
     lambda: ""
 )
 WindowsService._query_config = suppress_exception(
     WindowsService._query_config,
-    (FileNotFoundError,),
+    (FileNotFoundError, ZombieProcess, AccessDenied, OSError),
     lambda: dict(display_name="", binpath="", username="", start_type="")
 )
 
