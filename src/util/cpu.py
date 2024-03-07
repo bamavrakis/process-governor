@@ -37,7 +37,7 @@ def parse_affinity(in_affinity: str) -> List[int]:
             else:
                 raise ValueError("incorrect format")
     except Exception:
-        raise ValueError("invalid format. Use range `1-4`, specific cores `0;2;4`, or combination `1;3-5`")
+        raise ValueError("invalid format. Use range `0-3`, specific cores `0;2;4`, or combination `1;3-5`")
 
     _check_max_cpu_index(cores)
     return cores

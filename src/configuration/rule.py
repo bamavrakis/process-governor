@@ -45,7 +45,7 @@ class Rule(BaseModel):
         title="Affinity",
         description="Sets the **CPU core affinity** for the __process or service__, "
                     "defining which CPU cores are allowed for execution.\n\n"
-                    "**Format:** range `1-4`, specific cores `0;2;4`, combination `1;3-5`."
+                    "**Format:** range `0-3`, specific cores `0;2;4`, combination `1;3-5`."
     )
 
     @model_validator(mode="after")

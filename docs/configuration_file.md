@@ -102,7 +102,7 @@ defined by an object with a set of parameters.
 
 - `affinity` (string, optional): Specifies CPU core affinity.  
   You can define affinity as:
-    - Range (inclusive): `"affinity": "1-4"`
+    - Range (inclusive): `"affinity": "0-3"`
     - Specific cores: `"affinity": "0;2;4"`
     - Combination: `"affinity": "1;3-5"`
 

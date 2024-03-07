@@ -34,7 +34,7 @@ The rule configurator interface is a table with several columns:
 - **I/O Priority**: Sets the I/O priority for processes or services.
 - **Affinity**: Specifies CPU core affinity.  
   You can define affinity as:
-    - Range (inclusive): `1-4`
+    - Range (inclusive): `0-3`
     - Specific cores: `0;2;4`
     - Combination: `1;3-5`
 
