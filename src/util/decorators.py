@@ -101,13 +101,14 @@ def cached(timeout_in_seconds, logged=False) -> Callable[..., T]:
     return decorator
 
 
-def suppress_exception(function: Callable[..., T], *exception_type: Type[BaseException]) -> Callable[..., T]:
+def suppress_exception(function: Callable[..., T], exceptions: tuple = (BaseException,), default_value_function: Callable[[], T] = lambda: None) -> Callable[..., T]:
     """
     Decorator that suppresses specified exceptions raised by a function.
 
     Args:
         function (Callable): The function to decorate.
-        *exception_type (Type[BaseException]): Variable number of exception types to suppress.
+        *exceptions (tuple, default: (BaseException,)): Variable number of exception types to suppress.
+        default_value_function (Callable[[], T], default: lambda: None): Function that returns the default value.
 
     Returns:
         Callable: A decorated function that suppresses the specified exceptions.
@@ -115,12 +116,11 @@ def suppress_exception(function: Callable[..., T], *exception_type: Type[BaseExc
     if getattr(function, '__suppressed__', False):
         return function
 
-    exception_type = exception_type or [type(BaseException)]
-
     @wraps(function)
     def wrapper(*args, **kwargs) -> Callable[..., T]:
-        with suppress(*exception_type):
+        with suppress(*exceptions):
             return function(*args, **kwargs)
+        return default_value_function()
 
     wrapper.__suppressed__ = True
 

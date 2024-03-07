@@ -9,8 +9,17 @@ from constants.any import LOG
 from model.service import Service
 from util.decorators import suppress_exception
 
-# фикс бага psutil
-WindowsService.description = suppress_exception(WindowsService.description, FileNotFoundError)
+# Fix bug of psutil
+WindowsService.description = suppress_exception(
+    WindowsService.description,
+    (FileNotFoundError,),
+    lambda: ""
+)
+WindowsService._query_config = suppress_exception(
+    WindowsService._query_config,
+    (FileNotFoundError,),
+    lambda: dict(display_name="", binpath="", username="", start_type="")
+)
 
 
 class ServicesInfoService(ABC):
