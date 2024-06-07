@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, StringVar
 
-from tkfontawesome import icon_to_image
+# from tkfontawesome import icon_to_image # TODO: change icon package
 
 from constants.ui import UI_PADDING, ERROR_COLOR, TOOLTIP_ICON_SIZE
 from ui.widget.common.label import RichLabel, Image
@@ -13,13 +13,11 @@ class Tooltip(ttk.Frame):
 
         super().__init__(master, *args, **kwargs)
         self._text = StringVar(self, value=text)
-        self._info_icon = icon_to_image("info-circle", fill="cornflowerblue", scale_to_width=TOOLTIP_ICON_SIZE)
-        self._error_icon = icon_to_image("exclamation-triangle", fill=ERROR_COLOR, scale_to_width=TOOLTIP_ICON_SIZE)
-
-        self._image = Image(
-            self,
-            image=self._info_icon
-        )
+        # self._info_icon = icon_to_image("info-circle", fill="cornflowerblue", scale_to_width=TOOLTIP_ICON_SIZE) # TODO: change icon package
+        # self._error_icon = icon_to_image("exclamation-triangle", fill=ERROR_COLOR, scale_to_width=TOOLTIP_ICON_SIZE) # TODO: change icon package
+        self._info_icon = None
+        self._error_icon = None
+        self._image = Image(self, image=self._info_icon)
         self._image.pack(side=tk.LEFT, fill=tk.Y, padx=(0, UI_PADDING))
 
         label = RichLabel(self, height=4.25, textvariable=self._text)
