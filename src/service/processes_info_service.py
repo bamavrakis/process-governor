@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List
+from typing import Set
 
 import psutil
 from psutil import NoSuchProcess
@@ -23,30 +23,32 @@ class ProcessesInfoService(ABC):
             representing the running processes.
         """
         result: dict[int, Process] = {}
-        cls.__prev_pids = psutil.pids()
+        current_pids = psutil.pids()
 
-        for pid in cls.__prev_pids:
+        for pid in current_pids:
             try:
                 process = psutil.Process(pid)
-                info = process.as_dict(attrs=['name', 'exe', 'nice', 'ionice', 'cpu_affinity'])
+                info = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
                 result[pid] = Process(
                     pid,
-                    info['exe'],
-                    info['name'],
-                    int(info['nice']) if info['nice'] else None,
-                    int(info['ionice']) if info['ionice'] else None,
-                    info['cpu_affinity'],
-                    process
+                    info["exe"],
+                    info["name"],
+                    int(info["nice"]) if info["nice"] else None,
+                    int(info["ionice"]) if info["ionice"] else None,
+                    info["cpu_affinity"],
+                    process,
                 )
             except NoSuchProcess:
                 pass
 
+        cls.__prev_pids = set(current_pids)
+
         return result
 
-    __prev_pids: List[int] = []
+    __prev_pids: Set[int] = []
 
     @classmethod
-    def get_new_processes(cls) -> dict[int, Process]:
+    def get_new_processes(cls, config: Config) -> dict[int, Process]:
         """
         Get a dictionary of newly created processes since the last check.
 
@@ -61,19 +63,19 @@ class ProcessesInfoService(ABC):
             if pid not in cls.__prev_pids:
                 try:
                     process = psutil.Process(pid)
-                    info = process.as_dict(attrs=['name', 'exe', 'nice', 'ionice', 'cpu_affinity'])
+                    info = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
                     result[pid] = Process(
                         pid,
-                        info['exe'],
-                        info['name'],
-                        int(info['nice']) if info['nice'] else None,
-                        int(info['ionice']) if info['ionice'] else None,
-                        info['cpu_affinity'],
-                        process
+                        info["exe"],
+                        info["name"],
+                        int(info["nice"]) if info["nice"] else None,
+                        int(info["ionice"]) if info["ionice"] else None,
+                        info["cpu_affinity"],
+                        process,
                     )
                 except NoSuchProcess:
                     pass
 
-        cls.__prev_pids = current_pids
+        cls.__prev_pids = set(current_pids)
 
         return result

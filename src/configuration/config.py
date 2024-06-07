@@ -29,3 +29,8 @@ class Config(BaseModel):
     """
     A list of Rule objects that specify how application manages processes and services based on user-defined rules.
     """
+
+    processExclusionList: List[str] = Field(default_factory=list)
+    """
+    A list of process names to be excluded from all rules.
+    """
