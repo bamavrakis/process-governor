@@ -59,9 +59,11 @@ class RulesService(ABC):
         cls.__handle_processes(config, processes, services)
 
     @classmethod
-    def __handle_processes(cls, config, processes, services):
+    def __handle_processes(cls, config: Config, processes, services):
+        process_exclusion_list = set(config.processExclusionList)
+
         for pid, process_info in processes.items():
-            if pid in cls.__ignore_pids:
+            if pid in cls.__ignore_pids or process_info.name in process_exclusion_list:
                 continue
 
             try:
