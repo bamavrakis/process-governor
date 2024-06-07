@@ -2,7 +2,7 @@ import tkinter
 from tkinter import font, Widget
 from tkinter.ttk import Treeview
 
-from tkfontawesome import icon_to_image
+# from tkfontawesome import icon_to_image # TODO: change icon package
 
 
 def state(widget: Widget) -> str:
@@ -43,4 +43,5 @@ def get_label_font():
 
 
 def icon16px(name: str, fill: str = None):
-    return icon_to_image(name, fill=fill, scale_to_width=16)
+    # return icon_to_image(name, fill=fill, scale_to_width=16) # TODO: change icon package
+    return None

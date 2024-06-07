@@ -87,10 +87,12 @@ class RulesService(ABC):
                 if not_success:
                     cls.__ignore_process_parameter(tuple_pid_name, set(not_success))
 
-                    LOG.warning(f"Set failed [{', '.join(map(str, not_success))}] "
-                                f"for {process_info.name} ({process_info.pid}"
-                                f"{', ' + service_info.name + '' if service_info else ''}"
-                                f")")
+                    LOG.warning(
+                        f"Set failed [{', '.join(map(str, not_success))}] "
+                        f"for {process_info.name} ({process_info.pid}"
+                        f"{', ' + service_info.name + '' if service_info else ''}"
+                        f")"
+                    )
             except NoSuchProcess:
                 LOG.warning(f"No such process: {pid}")
 
@@ -104,7 +106,8 @@ class RulesService(ABC):
         try:
             process_info.process.ionice(rule.ioPriority)
             LOG.info(
-                f"Set {parameter.value} {iopriority_to_str[rule.ioPriority]} for {process_info.name} ({process_info.pid})")
+                f"Set {parameter.value} {iopriority_to_str[rule.ioPriority]} for {process_info.name} ({process_info.pid})"
+            )
         except AccessDenied:
             not_success.append(parameter)
 
@@ -118,7 +121,8 @@ class RulesService(ABC):
         try:
             process_info.process.nice(rule.priority)
             LOG.info(
-                f"Set {parameter.value} {priority_to_str[rule.priority]} for {process_info.name} ({process_info.pid})")
+                f"Set {parameter.value} {priority_to_str[rule.priority]} for {process_info.name} ({process_info.pid})"
+            )
         except AccessDenied:
             not_success.append(parameter)
 
@@ -135,7 +139,8 @@ class RulesService(ABC):
         try:
             process_info.process.cpu_affinity(rule.affinity)
             LOG.info(
-                f"Set {parameter.value} {format_affinity(rule.affinity)} for {process_info.name} ({process_info.pid})")
+                f"Set {parameter.value} {format_affinity(rule.affinity)} for {process_info.name} ({process_info.pid})"
+            )
         except AccessDenied:
             not_success.append(parameter)
 
@@ -145,7 +150,7 @@ class RulesService(ABC):
             if service and fnmatch_cached(service.name, rule.serviceSelector):
                 return rule
 
-            if fnmatch_cached(process.name, rule.processSelector):
+            if fnmatch_cached(process.exe, rule.processSelector):
                 return rule
         return None
 
