@@ -70,6 +70,7 @@ class ProcessesInfoService(ABC):
         """
         result: dict[int, Process] = {}
         current_pids = psutil.pids()
+        cls.__pids_to_reinforce = cls.__pids_to_reinforce.intersection(set(current_pids))
 
         for pid in current_pids:
             if pid not in cls.__prev_pids or pid in cls.__pids_to_reinforce:
