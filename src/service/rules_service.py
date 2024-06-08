@@ -52,14 +52,14 @@ class RulesService(ABC):
 
         if force:
             LOG.info("Configuration file has been modified. Reloading all rules to apply changes.")
-            processes = ProcessesInfoService.get_list()
+            processes = ProcessesInfoService.get_list(config)
         else:
             processes = ProcessesInfoService.get_new_processes()
 
         cls.__handle_processes(config, processes, services)
 
     @classmethod
-    def __handle_processes(cls, config: Config, processes, services):
+    def __handle_processes(cls, config: Config, processes: dict[int, Process], services: dict[int, Service]):
         process_exclusion_list = set(config.processExclusionList)
 
         for pid, process_info in processes.items():

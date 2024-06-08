@@ -5,6 +5,7 @@ import psutil
 from psutil import NoSuchProcess
 
 from model.process import Process
+from configuration.config import Config
 
 
 class ProcessesInfoService(ABC):
@@ -14,7 +15,7 @@ class ProcessesInfoService(ABC):
     """
 
     @classmethod
-    def get_list(cls) -> dict[int, Process]:
+    def get_list(cls, config: Config) -> dict[int, Process]:
         """
         Get a dictionary of running processes and their information.
 
@@ -23,12 +24,16 @@ class ProcessesInfoService(ABC):
             representing the running processes.
         """
         result: dict[int, Process] = {}
+        cls.__pids_to_reinforce = set()
+        cls.__process_reinforce_rule_list = set(
+            [process_name.lower() for process_name in config.processReinforceRuleList]
+        )
         current_pids = psutil.pids()
 
         for pid in current_pids:
             try:
                 process = psutil.Process(pid)
-                info = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
+                info: dict[str, str] = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
                 result[pid] = Process(
                     pid,
                     info["exe"],
@@ -38,6 +43,11 @@ class ProcessesInfoService(ABC):
                     info["cpu_affinity"],
                     process,
                 )
+
+                process_name = info.get("name", "").lower()
+                if process_name in cls.__process_reinforce_rule_list:
+                    cls.__pids_to_reinforce.add(pid)
+
             except NoSuchProcess:
                 pass
 
@@ -45,10 +55,12 @@ class ProcessesInfoService(ABC):
 
         return result
 
-    __prev_pids: Set[int] = []
+    __prev_pids: Set[int] = set()
+    __pids_to_reinforce: Set[int] = set()
+    __process_reinforce_rule_list: Set[int] = set()
 
     @classmethod
-    def get_new_processes(cls, config: Config) -> dict[int, Process]:
+    def get_new_processes(cls) -> dict[int, Process]:
         """
         Get a dictionary of newly created processes since the last check.
 
@@ -60,10 +72,10 @@ class ProcessesInfoService(ABC):
         current_pids = psutil.pids()
 
         for pid in current_pids:
-            if pid not in cls.__prev_pids:
+            if pid not in cls.__prev_pids or pid in cls.__pids_to_reinforce:
                 try:
                     process = psutil.Process(pid)
-                    info = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
+                    info: dict[str, str] = process.as_dict(attrs=["name", "exe", "nice", "ionice", "cpu_affinity"])
                     result[pid] = Process(
                         pid,
                         info["exe"],
@@ -73,6 +85,11 @@ class ProcessesInfoService(ABC):
                         info["cpu_affinity"],
                         process,
                     )
+
+                    process_name = info.get("name", "").lower()
+                    if process_name in cls.__process_reinforce_rule_list:
+                        cls.__pids_to_reinforce.add(pid)
+
                 except NoSuchProcess:
                     pass
 

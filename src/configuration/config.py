@@ -34,3 +34,8 @@ class Config(BaseModel):
     """
     A list of process names to be excluded from all rules.
     """
+
+    processReinforceRuleList: List[str] = Field(default_factory=list)
+    """
+    A list of process names to which rule application will be reinforced until process status regarding to rule stops reverting back.
+    """
